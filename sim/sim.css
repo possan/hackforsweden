@@ -31,3 +31,17 @@ div#controls {
 	background-color: rgba(0,0,0,0.33);
 }
 
+div.menu {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 200px;
+	background-color: rgba(0,0,0,0.33);
+}
+
+div.menu ul {
+}
+
+div.menu ul {
+}
+

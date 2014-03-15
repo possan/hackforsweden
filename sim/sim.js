@@ -277,7 +277,7 @@
 			var s = _this.getSlope(p.x, p.y);
 			var f = _this.getFlow(p.x, p.y);
 			var z = _this.getZone(p.x, p.y);
-			if (_this.zoneCache.indexOf(z) == -1) {
+			if (z != 0 && _this.zoneCache.indexOf(z) == -1) {
 				_this.zoneCache.push(z);
 				_this.onZone(z);
 			}
@@ -455,10 +455,14 @@
 			glowmap: 'glow.png',
 			zonemap: 'zones.png',
 			onLoad: function() {
+				document.getElementById('events').innerHTML = '';
 				renderFrame();
 			},
 			onZone: function(rgb) {
 				console.log('zone triggered:', rgb);
+				var el = document.createElement('li');
+				el.innerHTML = 'ZONE #'+rgb;
+				document.getElementById('events').appendChild(el);
 			}
 		});
 		document.getElementById('toggleplay').addEventListener('click', function(e) {
@@ -499,6 +503,7 @@
 			if (e.keyCode == 13 || e.keyCode == 32) {
 				sim.clearHistory();
 				console.log('reset zones here.');
+				document.getElementById('events').innerHTML = '';
 			}
 		});
 	});
