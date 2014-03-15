@@ -93,10 +93,12 @@
 			ret.red = new Array(img.width * img.height);
 			ret.green = new Array(img.width * img.height);
 			ret.blue = new Array(img.width * img.height);
+			ret.alpha = new Array(img.width * img.height);
 			for(var k=0; k<img.width*img.height; k++) {
 				ret.red[k] = imagedata.data[(k * 4) + 0];
 				ret.green[k] = imagedata.data[(k * 4) + 1];
 				ret.blue[k] = imagedata.data[(k * 4) + 2];
+				ret.alpha[k] = imagedata.data[(k * 4) + 3];
 			}
 			ret.image = img;
 		};
@@ -246,13 +248,11 @@
 	}
 
 	Simulation.prototype.getZone = function(x, y) {
-		var radii = 5;
-
 		var v0 = this.getPixelValue(this.zonemap.red, x, y);
-		var v1 = this.getPixelValue(this.zonemap.green, x, y);
-		var v2 = this.getPixelValue(this.zonemap.blue, x, y);
-
-		return v2*65536 + v1*256 + v0;
+		var v2 = this.getPixelValue(this.zonemap.alpha, x, y);
+		if (v2 == 255)
+			return v0;
+		return 0;
 	}
 
 	Simulation.prototype.getDensity = function(x, y) {
