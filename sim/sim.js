@@ -70,6 +70,7 @@
 		this.showOverlay = true;
 		this.running = false;
 		this.rainFlow = 0;
+		this.frame = 0;
 	}
 
 	var loadPixelData = function(url) {
@@ -88,18 +89,30 @@
 			ctx.height = img.height;
 			ctx.globalAlpha = 1.0;
 			ctx.drawImage(img, 0, 0, img.width, img.height);
-			console.log('context', ctx);
 			var imagedata = ctx.getImageData(0, 0, img.width, img.height);
 			ret.red = new Array(img.width * img.height);
 			ret.green = new Array(img.width * img.height);
+			ret.blue = new Array(img.width * img.height);
 			for(var k=0; k<img.width*img.height; k++) {
-				ret.red[k] = imagedata.data[(k * 4)];
+				ret.red[k] = imagedata.data[(k * 4) + 0];
 				ret.green[k] = imagedata.data[(k * 4) + 1];
+				ret.blue[k] = imagedata.data[(k * 4) + 2];
 			}
 			ret.image = img;
 		};
 		img.src = url;
 		return ret;
+	}
+
+	Simulation.prototype.clearHistory = function() {
+		this.ctx2.globalAlpha = 1.0;
+		this.ctx2.clearRect(0, 0, this.width, this.height);
+		// this.ctx2.fillStyle = '#f0f';
+		// this.ctx2.fillRect(0, 0, this.width, this.height);
+		for(var i=0; i<this.particles.length; i++) {
+			this.particles[i].alive = false;
+		}
+		this.zoneCache = [];
 	}
 
 	Simulation.prototype.init = function(opts) {
@@ -113,6 +126,17 @@
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.imageSmoothingEnabled = false;
 		this.ctx.webkitImageSmoothingEnabled = false;
+		this.canvas2 = document.createElement('canvas');
+		this.canvas2.width = opts.width;
+		this.canvas2.height = opts.height;
+		this.ctx2 = this.canvas2.getContext('2d');
+		console.log('canvas2', this.canvas2);
+		this.ctx2.imageSmoothingEnabled = false;
+		this.ctx2.webkitImageSmoothingEnabled = false;
+		console.log('ctx2', this.ctx2);
+		//	setTimeout(function() {
+		//		document.body.appendChild(_this.canvas2);
+		//	}, 10000);
 		this.width = opts.width;
 		this.height = opts.height;
 		this.canvas.width = this.width;
@@ -123,6 +147,7 @@
 			_this.dragging = true;
 			_this.testpoint.x = e.offsetX * this.width / window.innerWidth;
 			_this.testpoint.y = e.offsetY * this.height / window.innerHeight;
+			_this.emit(_this.testpoint.x, _this.testpoint.y, 100, 5.0, 5.0);
 		});
 		this.canvas.addEventListener('mousemove', function(e) {
 			_this.testpoint.x = e.offsetX * this.width / window.innerWidth;
@@ -135,8 +160,13 @@
 		this.flowmap = loadPixelData(opts.flowmap);
 		this.densitymap = loadPixelData(opts.densitymap);
 		this.overlaymap = loadPixelData(opts.overlaymap);
+		this.glowmap = loadPixelData(opts.glowmap);
+		this.zonemap = loadPixelData(opts.zonemap);
 		this.time = 0;
 		this.running = true;
+		this.clearHistory();
+		this.zoneCache = [];
+		this.onZone = opts.onZone;
 		opts.onLoad(this);
 	}
 
@@ -148,8 +178,8 @@
 			this.particles[this.nextparticle].init(
 				x2,
 				y2,
-				randrange(-0.1, 0.1),
-				randrange(-0.1, 0.1));
+				speed * randrange(-1, 1),
+				speed * randrange(-1, 1));
 			this.nextparticle ++;
 			this.nextparticle %= this.particles.length;
 		}
@@ -191,9 +221,6 @@
 			s.y /= l;
 		}
 
-		// s.x = sign(s.x) * s.x * s.x;
-		// s.y = sign(s.y) * s.y * s.y;
-
 		return s;
 	}
 
@@ -218,6 +245,16 @@
 		return s;
 	}
 
+	Simulation.prototype.getZone = function(x, y) {
+		var radii = 5;
+
+		var v0 = this.getPixelValue(this.zonemap.red, x, y);
+		var v1 = this.getPixelValue(this.zonemap.green, x, y);
+		var v2 = this.getPixelValue(this.zonemap.blue, x, y);
+
+		return v2*65536 + v1*256 + v0;
+	}
+
 	Simulation.prototype.getDensity = function(x, y) {
 		var v0 = this.getPixelValue(this.densitymap.red, x, y);
 		return v0 / 255.0;
@@ -235,38 +272,54 @@
 		this.particles.forEach(function(p) {
 			if (!p.alive)
 				return;
-			// var h = _this.getHeight(p.x, p.y);
+
 			var d = _this.getDensity(p.x, p.y);
 			var s = _this.getSlope(p.x, p.y);
-			// p.addForce(s.x * 10.0, s.y * 10.0, deltaTime);
 			var f = _this.getFlow(p.x, p.y);
-			// p.addForce(f.x * 10.0, f.y * 10.0, deltaTime);
+			var z = _this.getZone(p.x, p.y);
+			if (_this.zoneCache.indexOf(z) == -1) {
+				_this.zoneCache.push(z);
+				_this.onZone(z);
+			}
 			p.resetForce();
-			// p.addForce(p.vx, p.vy);
 			p.addForce(s.x * 10.0, s.y * 10.0);
-			// p.fx = s.x;
-			// p.fy = s.y;
 			p.addForce(f.x, f.y);
-			// p.addForce(_this.wind.x * s.x, _this.wind.y * s.y);
-			// console.log('d', d);
-			// p.addDrag(0.1);
 			p.step(deltaTime, 1.0 - d);
+
 		});
 		for(var i=0; i<this.rainFlow; i++) {
 			var rx = Math.random() * sim.width;
 			var ry = Math.random() * sim.height;
-			sim.emit(rx, ry, 1, 0.0, 0.0);
+			sim.emit(rx, ry, 1, 2.0, 2.0);
 		}
 		if (_this.dragging) {
-			_this.emit(this.testpoint.x, this.testpoint.y, 15, 1.0, 0.0);
+			// _this.emit(this.testpoint.x, this.testpoint.y, 1, 1.0, 0.0);
 		}
 	}
 
 	Simulation.prototype.draw = function() {
 		var _this = this;
 
+		this.frame ++;
+
 		this.ctx.fillStyle = '#111';
 		this.ctx.fillRect(0, 0, this.width, this.height);
+
+		var leavetrace = (this.frame % 100) == 0;
+
+		if (leavetrace) {
+ 			var dummy = this.ctx2.getImageData(0, 0, this.width, this.height);
+ 			var dummydata = dummy.data;
+ 			for(var k=0; k<this.width*this.height; k++) {
+ 				var a = dummydata[k * 4 + 3] - 1;
+ 				if (a < 0) a = 0;
+ 				dummydata[k * 4 + 3] = a;
+ 			}
+ 			this.ctx2.putImageData(dummy, 0, 0);
+			//	this.ctx2.globalAlpha = 1.0;
+			//	this.ctx2.fillStyle = "rgba(0,0,0,0.1)";
+			//	this.ctx2.fillRect(0, 0, this.width, this.height);
+		}
 
 		if (this.overlaymap.image && this.showOverlay) {
 			this.ctx.globalAlpha = 1.0;
@@ -289,6 +342,10 @@
 		}
 
 		this.ctx.globalAlpha = 1.0;
+		this.ctx.drawImage(this.canvas2, 0, 0);
+
+		this.ctx.globalAlpha = 1.0;
+		this.ctx2.globalAlpha = 1.0;
 
 		// draw backgrounds
 		// draw particles
@@ -310,6 +367,34 @@
      		_this.ctx.lineWidth = 1.0;
      		_this.ctx.strokeStyle = 'white';
      		_this.ctx.stroke();
+
+     		/*
+     		if (leavetrace) {
+				_this.ctx2.beginPath();
+
+				var nx = p.vx;
+				var ny = p.vy;
+				var l = nx*nx + ny*ny;
+				if (l > 0) {
+					l = Math.sqrt(l);
+					nx /= l;
+					ny /= l;
+				}
+				nx *= 5.0;
+				ny *= 5.0;
+
+				_this.ctx2.globalAlpha = 1.0;
+				_this.ctx2.moveTo(p.x + ny * 1.0, p.y - nx * 1.0);
+				_this.ctx2.lineTo(p.x - ny * 1.0, p.y + nx * 1.0);
+	     		_this.ctx2.lineWidth = Math.max(0, 2.0 - p.age / 20.0);
+	     		_this.ctx2.strokeStyle = 'white';
+	     		_this.ctx2.stroke();
+	     	}
+	     	*/
+
+    		_this.ctx2.globalAlpha = 0.1;
+			_this.ctx2.drawImage(_this.glowmap.image, p.x-10, p.y-10, 20, 20);
+	     	// }
 		});
 
 		if (this.showVectors) {
@@ -367,8 +452,13 @@
 			flowmap: 'flow.png',
 			densitymap: 'density.png',
 			overlaymap: 'overlay.png',
+			glowmap: 'glow.png',
+			zonemap: 'zones.png',
 			onLoad: function() {
 				renderFrame();
+			},
+			onZone: function(rgb) {
+				console.log('zone triggered:', rgb);
 			}
 		});
 		document.getElementById('toggleplay').addEventListener('click', function(e) {
@@ -399,15 +489,16 @@
 			sim.rainFlow = document.getElementById('rain').value;
 		});
 		document.addEventListener('keydown', function(e) {
-			if (e.keyCode == 32) {
-				document.getElementById('controls').style.display = 'block';
-			}
 			if (e.keyCode == 27) {
 				if (document.getElementById('controls').style.display == 'none') {
 					document.getElementById('controls').style.display = 'block';
 				} else {
 					document.getElementById('controls').style.display = 'none';
 				}
+			}
+			if (e.keyCode == 13 || e.keyCode == 32) {
+				sim.clearHistory();
+				console.log('reset zones here.');
 			}
 		});
 	});
