@@ -42,6 +42,15 @@ div.menu {
 div.menu ul {
 }
 
-div.menu ul {
+div#overlays {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+div#overlays div {
+	position: absolute;
+	left: 0px;
+	top: 0px;
 }
 
