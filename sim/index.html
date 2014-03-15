@@ -7,17 +7,20 @@
 <body>
 	<canvas id="c">
 	</canvas>
-	<p>
-		<button id="togglerain">RAIN</button>
-		<button id="toggleplay">PLAY</button>
+	<div id="controls" style="display:none;">
+		<p>
+			<button id="toggleplay">SIM</button>
+			&nbsp;
+			<button id="togglevectors">VECTORS</button>
+			<button id="toggledepth">DEPTH</button>
+			<button id="toggleflow">FLOW</button>
+			<button id="toggledensity">DENSITY</button>
+			<button id="toggleoverlay">OVERLAY</button>
 
-		&nbsp;
-		Wind X:
-		<input type="range" id="wind_x" min="-100" max="100" value="20"></input>
-
-		&nbsp;
-		Wind Y:
-		<input type="range" id="wind_y" min="-100" max="100" value="35"></input>
-	</p>
+			&nbsp; Wind X: <input type="range" id="wind_x" min="-100" max="100" value="0"></input>
+			&nbsp; Wind Y: <input type="range" id="wind_y" min="-100" max="100" value="0"></input>
+			&nbsp; Rain flow: <input type="range" id="rain" min="0" max="15" value="0"></input>
+		</p>
+	</div>
 </body>
 </html>
