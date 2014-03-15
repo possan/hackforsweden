@@ -167,8 +167,12 @@
 		return val;
 	}
 
+	function sign(v) {
+		return v < 0 ? -1 : 1;
+	}
+
 	Simulation.prototype.getSlope = function(x, y) {
-		var radii = 5;
+		var radii = 3;
 
 		var v0 = this.getPixelValue(this.heightmap.red, x - radii, y);
 		var v1 = this.getPixelValue(this.heightmap.red, x + radii, y);
@@ -186,6 +190,9 @@
 			s.x /= l;
 			s.y /= l;
 		}
+
+		// s.x = sign(s.x) * s.x * s.x;
+		// s.y = sign(s.y) * s.y * s.y;
 
 		return s;
 	}
@@ -228,28 +235,30 @@
 		this.particles.forEach(function(p) {
 			if (!p.alive)
 				return;
-			var h = _this.getHeight(p.x, p.y);
+			// var h = _this.getHeight(p.x, p.y);
 			var d = _this.getDensity(p.x, p.y);
 			var s = _this.getSlope(p.x, p.y);
 			// p.addForce(s.x * 10.0, s.y * 10.0, deltaTime);
 			var f = _this.getFlow(p.x, p.y);
 			// p.addForce(f.x * 10.0, f.y * 10.0, deltaTime);
 			p.resetForce();
-			p.addForce(p.vx, p.vy);
-			p.addForce(s.x, s.y);
-		//	p.addForce(f.x, f.y);
-		//	p.addForce(_this.wind.x, _this.wind.y);
+			// p.addForce(p.vx, p.vy);
+			p.addForce(s.x * 10.0, s.y * 10.0);
+			// p.fx = s.x;
+			// p.fy = s.y;
+			p.addForce(f.x, f.y);
+			// p.addForce(_this.wind.x * s.x, _this.wind.y * s.y);
 			// console.log('d', d);
 			// p.addDrag(0.1);
-			p.step(deltaTime, 1.0 - (d * h));
+			p.step(deltaTime, 1.0 - d);
 		});
 		for(var i=0; i<this.rainFlow; i++) {
 			var rx = Math.random() * sim.width;
 			var ry = Math.random() * sim.height;
-			sim.emit(rx, ry, 1, 1.0, 1.0);
+			sim.emit(rx, ry, 1, 0.0, 0.0);
 		}
 		if (_this.dragging) {
-			_this.emit(this.testpoint.x, this.testpoint.y, 15, 30.0, 15.0);
+			_this.emit(this.testpoint.x, this.testpoint.y, 15, 1.0, 0.0);
 		}
 	}
 
