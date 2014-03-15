@@ -1,0 +1,10 @@
+
+body {
+	background-color: #333;
+	color: #ccc;
+}
+
+canvas {
+	box-shadow: 0 2px 5px rgba(0,0,0,0.33);
+}
+
