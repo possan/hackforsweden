@@ -249,10 +249,12 @@
 
 	Simulation.prototype.getZone = function(x, y) {
 		var v0 = this.getPixelValue(this.zonemap.red, x, y);
-		var v2 = this.getPixelValue(this.zonemap.alpha, x, y);
-		if (v2 == 255)
-			return v0;
-		return 0;
+		var v1 = this.getPixelValue(this.zonemap.green, x, y);
+		var v2 = this.getPixelValue(this.zonemap.blue, x, y);
+		var v3 = this.getPixelValue(this.zonemap.alpha, x, y);
+		if (v3 < 255)
+			return 0;
+		return v0 + (v1 * 256) + (v2 * 65536);
 	}
 
 	Simulation.prototype.getDensity = function(x, y) {
