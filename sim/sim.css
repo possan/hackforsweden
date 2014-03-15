@@ -2,9 +2,14 @@
 body {
 	background-color: #333;
 	color: #ccc;
+	margin: 0;
+	padding: 0;
 }
 
 canvas {
 	box-shadow: 0 2px 5px rgba(0,0,0,0.33);
 }
 
+p {
+	padding: 20px;
+}
