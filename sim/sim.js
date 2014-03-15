@@ -34,12 +34,6 @@
 		this.fy = 0;
 	}
 
-	// Particle.prototype.addDrag = function(drag) {
-	// var drag = 0.6 - 0.3 * density;
-	// this.vx *= (1.0 - drag * deltaTime);
-	// this.vy *= (1.0 - drag * deltaTime);
-	// }
-
 	Particle.prototype.addForce = function(wx, wy) {
 		this.fx += wx;
 		this.fy += wy;
@@ -275,22 +269,30 @@
 		var dummy = this.ctx2.getImageData(0, 0, this.width, this.height);
 		var dummydata = dummy.data;
 		// console.log(dummydata);
-		for(var k=0; k<this.width*this.height; k++) {
-			var a = this.zonemap.alpha[k];
-			if (a == 255) {
-				var r = this.zonemap.red[k];
-				var g = this.zonemap.green[k];
-				var b = this.zonemap.blue[k];
-				var _rgb = r + (g * 256) + (b * 65536);
-				// console.log(_rgb);
-				if (rgb == _rgb) {
+		var k = 0;
+		for(var j=0; j<this.height; j++) {
+			for(var i=0; i<this.width; i++) {
+				var a = this.zonemap.alpha[k];
+				if (a == 255) {
+					var r = this.zonemap.red[k];
+					var g = this.zonemap.green[k];
+					var b = this.zonemap.blue[k];
+					var _rgb = r + (g * 256) + (b * 65536);
+					// console.log(_rgb);
+					if (rgb == _rgb) {
 
-					dummydata[k * 4 + 0] = 255;
-					dummydata[k * 4 + 1] = 0;
-					dummydata[k * 4 + 2] = 0;
-					dummydata[k * 4 + 3] = 255;
+						// mask
 
+						var masked = (i + j) % 5 < 2;
+						if (masked ) {
+							dummydata[k * 4 + 0] = 255;
+							dummydata[k * 4 + 1] = 0;
+							dummydata[k * 4 + 2] = 0;
+							dummydata[k * 4 + 3] = 255;
+						}
+					}
 				}
+				k ++;
 			}
 		}
 		this.ctx2.putImageData(dummy, 0, 0);
@@ -338,22 +340,6 @@
 		this.ctx.fillRect(0, 0, this.width, this.height);
 
 		var leavetrace = (this.frame % 100) == 0;
-
-		if (leavetrace) {
- 			/*
- 			var dummy = this.ctx2.getImageData(0, 0, this.width, this.height);
- 			var dummydata = dummy.data;
- 			for(var k=0; k<this.width*this.height; k++) {
- 				var a = dummydata[k * 4 + 3] - 1;
- 				if (a < 0) a = 0;
- 				dummydata[k * 4 + 3] = a;
- 			}
- 			this.ctx2.putImageData(dummy, 0, 0);
- 			*/
-			//	this.ctx2.globalAlpha = 1.0;
-			//	this.ctx2.fillStyle = "rgba(0,0,0,0.1)";
-			//	this.ctx2.fillRect(0, 0, this.width, this.height);
-		}
 
 		if (this.overlaymap.image && this.showOverlay) {
 			this.ctx.globalAlpha = 1.0;
@@ -472,7 +458,7 @@
 				console.log('zone triggered:', rgb, x, y);
 				var zoninfo = brunnLookup['i' + rgb];
 				console.log('brunn lookup', zoninfo);
-				if (zoninfo) {
+				if (zoninfo && zoninfo.t) {
 					var el = document.createElement('li');
 					el.innerText = zoninfo.t;
 					document.getElementById('events').appendChild(el);
