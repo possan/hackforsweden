@@ -143,13 +143,13 @@
 	Simulation.prototype.emit = function(x, y, n, radius, speed) {
 		// console.log('emit particles at', x, y, n, radius);
 		for(var i=0; i<n; i++) {
-			var x2 = x;
-			var y2 = y;
+			var x2 = x + radius * randrange(-1.0, 1.0);
+			var y2 = y + radius * randrange(-1.0, 1.0);
 			this.particles[this.nextparticle].init(
 				x2,
 				y2,
-				randrange(-1.0, 1.0) * (speed || 1.0),
-				randrange(-1.0, 1.0) * (speed || 1.0));
+				randrange(-0.1, 0.1),
+				randrange(-0.1, 0.1));
 			this.nextparticle ++;
 			this.nextparticle %= this.particles.length;
 		}
@@ -216,6 +216,11 @@
 		return v0 / 255.0;
 	}
 
+	Simulation.prototype.getHeight = function(x, y) {
+		var v0 = this.getPixelValue(this.heightmap.red, x, y);
+		return v0 / 255.0;
+	}
+
 	Simulation.prototype.step = function(deltaTime) {
 		var _this = this;
 		// console.log('sim::step', this.wind);
@@ -223,6 +228,7 @@
 		this.particles.forEach(function(p) {
 			if (!p.alive)
 				return;
+			var h = _this.getHeight(p.x, p.y);
 			var d = _this.getDensity(p.x, p.y);
 			var s = _this.getSlope(p.x, p.y);
 			// p.addForce(s.x * 10.0, s.y * 10.0, deltaTime);
@@ -231,11 +237,11 @@
 			p.resetForce();
 			p.addForce(p.vx, p.vy);
 			p.addForce(s.x, s.y);
-			p.addForce(f.x, f.y);
-			p.addForce(_this.wind.x, _this.wind.y);
+		//	p.addForce(f.x, f.y);
+		//	p.addForce(_this.wind.x, _this.wind.y);
 			// console.log('d', d);
 			// p.addDrag(0.1);
-			p.step(deltaTime, 1.0 - d);
+			p.step(deltaTime, 1.0 - (d * h));
 		});
 		for(var i=0; i<this.rainFlow; i++) {
 			var rx = Math.random() * sim.width;
