@@ -117,7 +117,7 @@
 	<div id="statbg"><div id="stats">No simulation</div><span id="simtime"></span></div>
 <div id="map_canvas"></div>
 <div id="overlaycnt" style="display:none"></div>
-	<div id="controls" style="display:none;">
+	<div id="controls">
 		Rain flow: <input type="range" id="rain" min="0" max="15" value="0"></input>
 	</div>
 	<div id="logocnt">
@@ -141,7 +141,7 @@
 	</div>
 	<script type="text/javascript">
 		window.addEventListener('load', function() {
-			var myOptions = {disableDefaultUI: true,zoom:12,center:centerlatlng,mapTypeId:google.maps.MapTypeId.ROAD_MAPS,draggableCursor:'crosshair',scaleControl:false};
+			var myOptions = {disableDefaultUI: true,zoom:12,center:centerlatlng,mapTypeId:google.maps.MapTypeId.TERRAIN,draggableCursor:'crosshair',scaleControl:false};
 			var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
 			var projection;
 			var overlay;
