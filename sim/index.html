@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="sim.css" />
 	<script type="text/javascript" src="sim.js"></script>
-<script type="text/javascript" src="brunndata.js"></script>
+	<script type="text/javascript" src="brunndata.js"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 	<script src="msghandler.js"></script>
@@ -123,356 +123,328 @@
 	<div id="logocnt">
 		<img src="img/cavagent.gif"><br/>
 		<img src="img/spotify-logo.png"><br/>
-		
-		<img src="img/sp.png">
-		<br />
+		<img src="img/sp.png"><br />
 		<span id="toggleapi">Använda API'er</span>
 		<ul id="apilist"></ul>
 	</div>
 	 <div id="mainframe">
-	 	<div id="fastighet"> 
-		      <div id="fastighetsflode" class="innercnt">
-			     
-			  </div>
-		 </div>	
-	 	<div id="nyheter" class="box">	 
-		    <div id="news" class="innercnt">
-		    	
-		     </div>
-	 	</div>
-    	
-	 
-	 
-	 
-	 <div id="riskText">
-		
-	 	
-	 	
-	 </div>
- </div>
-	
-
-<script type="text/javascript">
-window.addEventListener('load', function() {
-var myOptions = {disableDefaultUI: true,zoom:12,center:centerlatlng,mapTypeId:google.maps.MapTypeId.ROAD_MAPS,draggableCursor:'crosshair',scaleControl:false};
-var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
-var projection;
-var overlay;
-var tmpmarker = [];
-var apiuse = [{
-	"namn":"Vattenskydd (Naturvårdsverket)",
-	"url":"view/layer_vattenskydd.png"
-},
-{
-	"namn":"Brunnar (SGU)",
-	//"url":"view/layer_brunnar.png"
-	action:function() {
-		$.each(brunnLookup,function(i,j) {
-			var mrk = new google.maps.Marker({
-					    position: new google.maps.LatLng(j.y,j.x),
-					    map: map,
-					    //icon:'caution.png',
-					    animation: google.maps.Animation.DROP,
-					    title: j.t
-					});
-			tmpmarker.push(mrk);
-		});
-	}
-},
-{
-	"namn":"Morän (SGU)",
-	"url":"view/layer_moraen.png"
-},
-{
-	"namn":"Berggrund (SGU)",
-	"url":"view/layer_berggrun.png"
-},
-{
-	"namn":"Prognos för nederbörd (SMHI)"
-	//"url":"view/layer_nederboerd.png"
-},
-{
-	"namn":"Skogs API (SLU)",
-	"url":"view/layer_wood.png"
-}];
-var useRainBySmhi = false;
-
-$.each(apiuse,function() {
-	var t = this;
-	$('<li><span>'+this.namn+'</span></li>').click(function() {
-		for(var i=0;i<tmpmarker.length;i++)
-				{
-					tmpmarker[i].setMap(null);
-					tmpmarker[i] = null;
-				}
-				tmpmarker = [];
-		if (t.url) {
-			$('#overlaycnt').css('background-image',"url('"+t.url+"')").show();
-		}
-		else if (t.action)
-		{
-			$('#overlaycnt').hide();
-			t.action();
-		}
-	}).appendTo($('#apilist'))
-});
-
-$('#toggleapi').click(function() {
-	$('#apilist').slideToggle();
-	
-});
-
-var overlayDiv= document.createElement('div');
-var currentTheme = 0;
-var sim = new Simulation();
-
-	var ui_running = true;
-
-	var renderFrame = function() {
-		// console.log('render frame');
-		sim.draw();
-		requestAnimationFrame(renderFrame);
-	};
-
-	var simulation_speed = 20;
-
-	var tick = function() {
-		if (ui_running) {
-			sim.step(1.0 / simulation_speed);
-		}
-	}
-
-	setInterval(tick, simulation_speed);
-
-function initializeOverlay(elm,cb) {
-	//var b = map.getBounds();	
-	var cntDiv = document.createElement('div');
-	cntDiv.style.position = 'absolute';
-	cntDiv.style.width = '1024px';
-	cntDiv.style.height = '768px';
-	cntDiv.appendChild(elm);
-	
-	overlayDiv.style.position = 'absolute';
-	overlayDiv.setAttribute('id','overlays');
-	cntDiv.appendChild(overlayDiv);
-	elm.style.position = 'absolute';
-	//var sw = b.getSouthWest();
-	//var ne = b.getNorthEast();
-	var sw = new google.maps.LatLng(63.25225601350672,18.58177575000002);
-	var ne = new google.maps.LatLng(63.37068145529103,18.93333825000002);
-	var nb = new google.maps.LatLngBounds(sw,ne);
-  
-  
- 	 overlay = new SimulatorOverlay(nb, cntDiv, map,cb,sim);
-
-  
-}
-var maxRisk = 0;
-window.ZoneListeners = [];
-
-var projection;
-google.maps.event.addListenerOnce(map,"projection_changed", function() {
-	projection = map.getProjection();
-   
-
-	var currentMarkers = [];
-	var totstat = document.getElementById('statbg');
-	var canvasElement = document.createElement('canvas');
-	canvasElement.style.width = '100%';
-	canvasElement.style.height = '100%';
-
-   initializeOverlay(canvasElement,function() {
-   		sim.init({
-			particles: 100000,
-			width: 1024,
-			height: 768,
-			canvas: canvasElement,
-			heightmap: 'height.png',
-			flowmap: 'flow.png',
-			densitymap: 'density_with_well.png',
-			overlaymap: 'overlay.png',
-			cloudmap: 'moln.png',
-			glowmap: 'glow2.png',
-			rainmap: 'water_sprite.png',
-			zonemap: 'zones.png',
-			onLoad: function() {
-				//document.getElementById('events').innerHTML = '';
-				overlayDiv.innerHTML = '';
-				renderFrame();
+	 	<div id="fastighet">
+			<div id="fastighetsflode" class="innercnt">
+			</div>
+		</div>
+	 	<div id="nyheter" class="box">
+			<div id="news" class="innercnt">
+			</div>
+		</div>
+		<div id="riskText">
+		</div>
+	</div>
+	<script type="text/javascript">
+		window.addEventListener('load', function() {
+			var myOptions = {disableDefaultUI: true,zoom:12,center:centerlatlng,mapTypeId:google.maps.MapTypeId.ROAD_MAPS,draggableCursor:'crosshair',scaleControl:false};
+			var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+			var projection;
+			var overlay;
+			var tmpmarker = [];
+			var apiuse = [{
+				"namn":"Vattenskydd (Naturvårdsverket)",
+				"url":"view/layer_vattenskydd.png"
 			},
-			onZoneStats: function(d, alive, inzones) {
-				if (ZoneListeners.length)
-				{
-					//console.log(d,alive,inzones);
-					for(var i =0;i<ZoneListeners.length;i++)
-					{
-						var f = ZoneListeners[i];
-						if (f)
-							f(d,alive,inzones);	
-					}
-				}
-				var totalRisk = 0;
-				for(var k in d)
-				{
-					var bdata = brunnLookup['i'+k];
-					if (bdata)
-						totalRisk+=bdata.risk*d[k];
-				}
-				if (maxRisk<totalRisk)
-					maxRisk = totalRisk;
-				var r = Math.min(255,255-((totalRisk/alive)*12));
-				var g = Math.min(255,(inzones/alive)*255);
-				totstat.style.backgroundColor = 'rgb('+r+','+g+',0)';
-				//console.log('zone stats', alive, inzones, d);
-				document.getElementById('stats').innerText = inzones + ' / ' + alive+', Risk kalkyl:'+totalRisk+' / '+maxRisk;
-			},
-			onZone: function(rgb, x, y) {
-				//console.log('zone triggered:', rgb, x, y);
-				var zoninfo = brunnLookup['i' + rgb];
-				//console.log('brunn lookup', zoninfo);
-				if (zoninfo && zoninfo.t) {
-
-
-					/*
-					var el = document.createElement('li');
-					el.innerText = zoninfo.t;
-					document.getElementById('events').appendChild(el);
-*/
-					addEvent(zoninfo.t,rgb);
-					
-					var mrk = new google.maps.Marker({
-					    position: new google.maps.LatLng(zoninfo.y,zoninfo.x),
-					    map: map,
-					    icon:'caution.png',
-					    animation: google.maps.Animation.DROP,
-					    title: zoninfo.t
-					});
-					new StatsOverlay(mrk.position,mrk,zoninfo,rgb,map,sim);
-					currentMarkers.push(mrk);
-				}
-			}
-		});
-		checkRain(sim);
-		//map.setOptions({styles: layerStyle[currentTheme++%layerStyle.length]});
-		document.getElementsByTagName('body')[0].className = 'notheme';
-		var evts = {
-			'SATELLITE':function() {
-				map.setMapTypeId(google.maps.MapTypeId.SATELLITE );
-			},
-			'TERRAIN':function() {
-				map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
-			},
-			'ROADMAP':function() {
-				map.setMapTypeId(google.maps.MapTypeId.ROADMAP );
-			},
-			'HYBRID':function() {
-				map.setMapTypeId(google.maps.MapTypeId.HYBRID );
-			},
-			'Vectors':function() {
-				sim.showVectors = !sim.showVectors;
-			},
-			'Depth':function() {
-				sim.showDepth = !sim.showDepth;
-			},
-			'Toggle Overlay':function() {
-				$('#overlaycnt').toggle();
-			},
-			'Regnschema från SMHI':function() {
-				useRainBySmhi=!useRainBySmhi;
-			},
-			'Change theme':function() {
-				map.setOptions({styles: layerStyle[currentTheme++%layerStyle.length]});
-				document.getElementsByTagName('body')[0].className = 'theme'+currentTheme;
-			},
-			'Turn of theme':function() {
-				map.setOptions({styles: null});
-				currentTheme = 0;
-				document.getElementsByTagName('body')[0].className = 'notheme';
-			}//,
-			//'':function() {}
-		};
-		var ctrlCnt = document.getElementById('controls');
-		for(i in evts)
-		{
-			var div = document.createElement('button');
-			div.innerText = i;
-			//document.getElementById(i)
-			div.addEventListener('click',evts[i],false);			
-			ctrlCnt.appendChild(div);
-		}
-/*
-		
-		document.getElementById('wind_x').addEventListener('change', function(e) {
-			sim.wind.x = document.getElementById('wind_x').value / 10.0;
-		});
-		document.getElementById('wind_y').addEventListener('change', function(e) {
-			sim.wind.y = document.getElementById('wind_y').value / 10.0;
-		});
-		
-*/		
-		var simt = document.getElementById('simtime');
-		var hasrainwarned = false;
-		setInterval(function() {
-			simt.innerText = sim.simulatedTime.toString().substring(0,21);
-			if (sim.raintot>200 && !hasrainwarned )
 			{
-				hasrainwarned = true;
-				addNews('Varning för höga flöden i Västernorrland',new Date().getTime(),'Regn i kombination med snösmältning ger höga till mycket höga flöden i vattendrag i regionen.','Warn.','deldata');
-			}
-			if (useRainBySmhi) {
-			for(var i=0;i<rainTimes.length;i++)
-				{
-					var dt = new Date(rainTimes[i].t);
-					if (sim.simulatedTime>dt)
+				"namn":"Brunnar (SGU)",
+				//"url":"view/layer_brunnar.png"
+				action:function() {
+					$.each(brunnLookup,function(i,j) {
+						var mrk = new google.maps.Marker({
+								    position: new google.maps.LatLng(j.y,j.x),
+								    map: map,
+								    //icon:'caution.png',
+								    animation: google.maps.Animation.DROP,
+								    title: j.t
+								});
+						tmpmarker.push(mrk);
+					});
+				}
+			},
+			{
+				"namn":"Morän (SGU)",
+				"url":"view/layer_moraen.png"
+			},
+			{
+				"namn":"Berggrund (SGU)",
+				"url":"view/layer_berggrun.png"
+			},
+			{
+				"namn":"Prognos för nederbörd (SMHI)"
+				//"url":"view/layer_nederboerd.png"
+			},
+			{
+				"namn":"Skogs API (SLU)",
+				"url":"view/layer_wood.png"
+			}];
+			var useRainBySmhi = false;
+
+			$.each(apiuse,function() {
+				var t = this;
+				$('<li><span>'+this.namn+'</span></li>').click(function() {
+					for(var i=0;i<tmpmarker.length;i++)
 					{
-						sim.rainFlow = rainTimes[i].flow;
-					}	
+						tmpmarker[i].setMap(null);
+						tmpmarker[i] = null;
+					}
+					tmpmarker = [];
+					if (t.url) {
+						$('#overlaycnt').css('background-image',"url('"+t.url+"')").show();
+					}
+					else if (t.action)
+					{
+						$('#overlaycnt').hide();
+						t.action();
+					}
+				}).appendTo($('#apilist'))
+			});
+
+			$('#toggleapi').click(function() {
+				$('#apilist').slideToggle();
+			});
+
+			var overlayDiv= document.createElement('div');
+			var currentTheme = 0;
+			var sim = new Simulation();
+
+			var ui_running = true;
+
+			var renderFrame = function() {
+				// console.log('render frame');
+				sim.draw();
+				requestAnimationFrame(renderFrame);
+			};
+
+			var simulation_speed = 20;
+
+			var tick = function() {
+				if (ui_running) {
+					sim.step(1.0 / simulation_speed);
 				}
 			}
-			
-		},100);
-		document.getElementById('rain').addEventListener('change', function(e) {
-			sim.rainFlow = this.value;
+
+			setInterval(tick, simulation_speed);
+
+			function initializeOverlay(elm,cb) {
+				//var b = map.getBounds();	
+				var cntDiv = document.createElement('div');
+				cntDiv.style.position = 'absolute';
+				cntDiv.style.width = '1024px';
+				cntDiv.style.height = '768px';
+				cntDiv.appendChild(elm);
+
+				overlayDiv.style.position = 'absolute';
+				overlayDiv.setAttribute('id','overlays');
+				cntDiv.appendChild(overlayDiv);
+				elm.style.position = 'absolute';
+				//var sw = b.getSouthWest();
+				//var ne = b.getNorthEast();
+				var sw = new google.maps.LatLng(63.25225601350672,18.58177575000002);
+				var ne = new google.maps.LatLng(63.37068145529103,18.93333825000002);
+				var nb = new google.maps.LatLngBounds(sw,ne);
+				 overlay = new SimulatorOverlay(nb, cntDiv, map,cb,sim);
+			}
+			var maxRisk = 0;
+			window.ZoneListeners = [];
+
+			var projection;
+			google.maps.event.addListenerOnce(map,"projection_changed", function() {
+				projection = map.getProjection();
+
+				var currentMarkers = [];
+				var totstat = document.getElementById('statbg');
+				var canvasElement = document.createElement('canvas');
+				canvasElement.style.width = '100%';
+				canvasElement.style.height = '100%';
+
+			   initializeOverlay(canvasElement,function() {
+			   		sim.init({
+						particles: 100000,
+						width: 1024,
+						height: 768,
+						canvas: canvasElement,
+						heightmap: 'height.png',
+						flowmap: 'flow.png',
+						densitymap: 'density_with_well.png',
+						overlaymap: 'overlay.png',
+						cloudmap: 'moln.png',
+						glowmap: 'glow2.png',
+						rainmap: 'water_sprite.png',
+						zonemap: 'zones.png',
+						onLoad: function() {
+							//document.getElementById('events').innerHTML = '';
+							overlayDiv.innerHTML = '';
+							renderFrame();
+						},
+						onZoneStats: function(d, alive, inzones) {
+							if (ZoneListeners.length)
+							{
+								//console.log(d,alive,inzones);
+								for(var i =0;i<ZoneListeners.length;i++)
+								{
+									var f = ZoneListeners[i];
+									if (f) {
+										f(d,alive,inzones);
+									}
+								}
+							}
+							var totalRisk = 0;
+							for(var k in d)
+							{
+								var bdata = brunnLookup['i'+k];
+								if (bdata)
+									totalRisk+=bdata.risk*d[k];
+							}
+							if (maxRisk<totalRisk)
+								maxRisk = totalRisk;
+							var r = Math.min(255,255-((totalRisk/alive)*12));
+							var g = Math.min(255,(inzones/alive)*255);
+							totstat.style.backgroundColor = 'rgb('+r+','+g+',0)';
+							//console.log('zone stats', alive, inzones, d);
+							document.getElementById('stats').innerText = inzones + ' / ' + alive+', Risk kalkyl:'+totalRisk+' / '+maxRisk;
+						},
+						onZone: function(rgb, x, y) {
+							//console.log('zone triggered:', rgb, x, y);
+							var zoninfo = brunnLookup['i' + rgb];
+							//console.log('brunn lookup', zoninfo);
+							if (zoninfo && zoninfo.t) {
+								addEvent(zoninfo.t,rgb);
+
+								var mrk = new google.maps.Marker({
+								    position: new google.maps.LatLng(zoninfo.y,zoninfo.x),
+								    map: map,
+								    icon:'caution.png',
+								    animation: google.maps.Animation.DROP,
+								    title: zoninfo.t
+								});
+								new StatsOverlay(mrk.position,mrk,zoninfo,rgb,map,sim);
+								currentMarkers.push(mrk);
+							}
+						}
+					});
+					checkRain(sim);
+					document.getElementsByTagName('body')[0].className = 'notheme';
+					var evts = {
+						'SATELLITE':function() {
+							map.setMapTypeId(google.maps.MapTypeId.SATELLITE );
+						},
+						'TERRAIN':function() {
+							map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+						},
+						'ROADMAP':function() {
+							map.setMapTypeId(google.maps.MapTypeId.ROADMAP );
+						},
+						'HYBRID':function() {
+							map.setMapTypeId(google.maps.MapTypeId.HYBRID );
+						},
+						'Vectors':function() {
+							sim.showVectors = !sim.showVectors;
+						},
+						'Depth':function() {
+							sim.showDepth = !sim.showDepth;
+						},
+						'Toggle Overlay':function() {
+							$('#overlaycnt').toggle();
+						},
+						'Regnschema från SMHI':function() {
+							useRainBySmhi=!useRainBySmhi;
+						},
+						'Change theme':function() {
+							map.setOptions({styles: layerStyle[currentTheme++%layerStyle.length]});
+							document.getElementsByTagName('body')[0].className = 'theme'+currentTheme;
+						},
+						'Turn of theme':function() {
+							map.setOptions({styles: null});
+							currentTheme = 0;
+							document.getElementsByTagName('body')[0].className = 'notheme';
+						}
+					};
+
+					var ctrlCnt = document.getElementById('controls');
+					for(i in evts) {
+						var div = document.createElement('button');
+						div.innerText = i;
+						//document.getElementById(i)
+						div.addEventListener('click',evts[i],false);
+						ctrlCnt.appendChild(div);
+					}
+
+					var simt = document.getElementById('simtime');
+					var hasrainwarned = false;
+					setInterval(function() {
+						simt.innerText = sim.simulatedTime.toString().substring(0,21);
+						if (sim.raintot>200 && !hasrainwarned )
+						{
+							hasrainwarned = true;
+							addNews('Varning för höga flöden i Västernorrland',new Date().getTime(),'Regn i kombination med snösmältning ger höga till mycket höga flöden i vattendrag i regionen.','Warn.','deldata');
+						}
+						if (useRainBySmhi) {
+						for(var i=0;i<rainTimes.length;i++)
+							{
+								var dt = new Date(rainTimes[i].t);
+								if (sim.simulatedTime>dt)
+								{
+									sim.rainFlow = rainTimes[i].flow;
+								}
+							}
+						}
+					},100);
+
+					document.getElementById('rain').addEventListener('change', function(e) {
+						sim.rainFlow = this.value;
+					});
+
+					document.addEventListener('keydown', function(e) {
+						if (e.keyCode == 27) {
+							if (ctrlCnt.style.display == 'none') {
+								ctrlCnt.style.display = 'block';
+							} else {
+								ctrlCnt.style.display = 'none';
+							}
+						}
+						if (e.keyCode == 13 || e.keyCode == 32) {
+							sim.clearHistory();
+							console.log('reset zones here.');
+							//document.getElementById('events').innerHTML = '';
+							for(var i=0;i<currentMarkers.length;i++)
+							{
+								currentMarkers[i].setMap(null);
+								currentMarkers[i] = null;
+							}
+							$('.deldata').remove();
+							currentMarkers = [];
+						}
+					});
+				});
+			});
 		});
 
-		document.addEventListener('keydown', function(e) {
-			if (e.keyCode == 27) {
-				if (ctrlCnt.style.display == 'none') {
-					ctrlCnt.style.display = 'block';
-				} else {
-					ctrlCnt.style.display = 'none';
-				}
-			}
-			if (e.keyCode == 13 || e.keyCode == 32) {
-				sim.clearHistory();
-				console.log('reset zones here.');
-				//document.getElementById('events').innerHTML = '';
-				for(var i=0;i<currentMarkers.length;i++)
-				{
-					currentMarkers[i].setMap(null);
-					currentMarkers[i] = null;
-				}
-				$('.deldata').remove();
-				currentMarkers = [];
-				//document.getElementById('overlays').innerHTML = '';
-			}
-		});
-   });
-	
-});
-});
+		var rainTimes = [];
+		function checkRain(sim) {
+			$.get('http://opendata-download-metfcst.smhi.se/api/category/pmp1g/version/1/geopoint/lat/63.31/lon/18.75/data.json').done(function(d) {
+				console.log('data!!!',d);
+				$.each(d.timeseries,function(i,j) {
+					rainTimes.push({t:j.validTime,flow:Math.round(j.pit*10)});
+				});
+			});
+		}
 
-var rainTimes = [];
-function checkRain(sim) {
-	$.get('http://opendata-download-metfcst.smhi.se/api/category/pmp1g/version/1/geopoint/lat/63.31/lon/18.75/data.json').done(function(d) {
-		console.log('data!!!',d);
-		$.each(d.timeseries,function(i,j) {
-			rainTimes.push({t:j.validTime,flow:Math.round(j.pit*10)});
-			
-		});
-	});
-}
-</script>
-<script type="text/javascript" src="http://api.krisinformation.se/v1/feed?format=jsonp&callback=dd"></script>
+	</script>
+	<script type="text/javascript" src="http://api.krisinformation.se/v1/feed?format=jsonp&callback=dd"></script>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-49041809-1', 'risksim.herokuapp.com');
+		ga('send', 'pageview');
+
+	</script>
 </body>
 </html>

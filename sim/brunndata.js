@@ -2,39 +2,39 @@ brunnLookup = {"i1785":{"x":18.7101385106986,"y":63.2926101287817,"t":"MYREN 8 (
 
 
 function addLake(n, t) {
-		brunnLookup['i'+n] = {
-			x: 0,
-			y: 0,
-			risk:5,
-			t: t
-		};
-	}
+	brunnLookup['i'+n] = {
+		x: 0,
+		y: 0,
+		risk:5,
+		t: t
+	};
+}
 
-	for(var k in brunnLookup)
-	{
-		brunnLookup[k].risk = Math.round(Math.random()*3);
-	}
+for(var k in brunnLookup)
+{
+	brunnLookup[k].risk = Math.round(Math.random()*3);
+}
 
-	addLake(3801089, 'Mjösjön');
-	addLake(3801091, 'Höksjön');
-	addLake(3801090, 'Lomsjön');
-	addLake(3801096, 'Klingaresjön');
-	addLake(3801095, 'Åktjärnen');
-	addLake(3801106, 'Själevadfjärden/Veckefjärden/Bottenhavet');
-	addLake(3801092, 'Backasjön');
-	addLake(3801092, 'Götadammen');
-	addLake(3801107, 'Mickeroossjön');
-	addLake(3801094, 'Linnbäckstjärnen');
-	addLake(3801101, 'Tjärntjärnen');
-	addLake(3801100, 'Bergsjön');
-	addLake(3801103, 'Vikessjön');
-	addLake(3801102, 'Älvsjösön');
-	addLake(3801104, 'Täftsjön');
-	addLake(3801105, 'Högbysjön');
-	addLake(3801114, 'Ovansjösjön');
-	addLake(3801115, 'Golfkusten');
-	addLake(3801113, 'Öfjärden');
-	addLake(3801110, 'Hamptjärn');
-	addLake(3801109, 'Vitsjön');
-	addLake(3801099, 'Höglandssjön');
-	addLake(3801115, 'Mjödsjön');
+addLake(3801089, 'Mjösjön');
+addLake(3801091, 'Höksjön');
+addLake(3801090, 'Lomsjön');
+addLake(3801096, 'Klingaresjön');
+addLake(3801095, 'Åktjärnen');
+addLake(3801106, 'Själevadfjärden/Veckefjärden/Bottenhavet');
+addLake(3801092, 'Backasjön');
+addLake(3801092, 'Götadammen');
+addLake(3801107, 'Mickeroossjön');
+addLake(3801094, 'Linnbäckstjärnen');
+addLake(3801101, 'Tjärntjärnen');
+addLake(3801100, 'Bergsjön');
+addLake(3801103, 'Vikessjön');
+addLake(3801102, 'Älvsjösön');
+addLake(3801104, 'Täftsjön');
+addLake(3801105, 'Högbysjön');
+addLake(3801114, 'Ovansjösjön');
+addLake(3801115, 'Golfkusten');
+addLake(3801113, 'Öfjärden');
+addLake(3801110, 'Hamptjärn');
+addLake(3801109, 'Vitsjön');
+addLake(3801099, 'Höglandssjön');
+addLake(3801115, 'Mjödsjön');
