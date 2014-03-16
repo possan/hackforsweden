@@ -114,7 +114,7 @@
 	</script>
 </head>
 <body>
-	<div id="statbg"><div id="stats">No simulation</div><span id="simtime"></span></div>
+	<div id="statbg"><!-- <div id="stats">No simulation</div> --><span id="simtime"></span></div>
 <div id="map_canvas"></div>
 <div id="overlaycnt" style="display:none"></div>
 	<div id="controls">
@@ -137,6 +137,9 @@
 			</div>
 		</div>
 		<div id="riskText">
+			README - Stay centered near Örnsköldsvik and press somewhere on the map to release a hazardous substance into the environment.
+			The simulation will show which wells are affected in the top right corner. Simulated warnings will show up just above
+			this box. The map will show wells, lakes and streams being contaminated when the substance reaches them. Press SPACE to reset the simulation.
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -306,7 +309,7 @@
 							var g = Math.min(255,(inzones/alive)*255);
 							totstat.style.backgroundColor = 'rgb('+r+','+g+',0)';
 							//console.log('zone stats', alive, inzones, d);
-							document.getElementById('stats').innerText = inzones + ' / ' + alive+', Risk kalkyl:'+totalRisk+' / '+maxRisk;
+							//document.getElementById('stats').innerText = inzones + ' / ' + alive+', Estimated risk: '+totalRisk+' / '+maxRisk;
 						},
 						onZone: function(rgb, x, y) {
 							//console.log('zone triggered:', rgb, x, y);
@@ -342,23 +345,23 @@
 						'HYBRID':function() {
 							map.setMapTypeId(google.maps.MapTypeId.HYBRID );
 						},
-						'Vectors':function() {
+						'VECTORS':function() {
 							sim.showVectors = !sim.showVectors;
 						},
-						'Depth':function() {
+						'DEPTH':function() {
 							sim.showDepth = !sim.showDepth;
 						},
-						'Toggle Overlay':function() {
+						'TOGGLE OVERLAY':function() {
 							$('#overlaycnt').toggle();
 						},
-						'Regnschema från SMHI':function() {
+						'RAIN FROM SMHI':function() {
 							useRainBySmhi=!useRainBySmhi;
 						},
-						'Change theme':function() {
+						'CHANGE THEME':function() {
 							map.setOptions({styles: layerStyle[currentTheme++%layerStyle.length]});
 							document.getElementsByTagName('body')[0].className = 'theme'+currentTheme;
 						},
-						'Turn of theme':function() {
+						'TURN OFF THEME':function() {
 							map.setOptions({styles: null});
 							currentTheme = 0;
 							document.getElementsByTagName('body')[0].className = 'notheme';
@@ -427,7 +430,6 @@
 		var rainTimes = [];
 		function checkRain(sim) {
 			$.get('http://opendata-download-metfcst.smhi.se/api/category/pmp1g/version/1/geopoint/lat/63.31/lon/18.75/data.json').done(function(d) {
-				console.log('data!!!',d);
 				$.each(d.timeseries,function(i,j) {
 					rainTimes.push({t:j.validTime,flow:Math.round(j.pit*10)});
 				});
@@ -446,5 +448,6 @@
 		ga('send', 'pageview');
 
 	</script>
+	<a href="https://github.com/possan/hackforsweden"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github-camo.global.ssl.fastly.net/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

@@ -109,7 +109,7 @@ body input, body button {
 	border:1px solid #ffffff;
 }
 .notheme #riskText {
-	position:relative; left:20px; top:50px; width: 260px; height: 116px; border-style:solid;  border-width: 1px; border-color:#ffffff;
+	position:relative; left:20px; top:50px; width: 260px; height: 116px; border-style:solid;  border-width: 1px; border-color:#ffffff; font-size:11px; padding: 2px 2px 2px 2px; text-align: justify;
 }
 
 .notheme #mainframe {
