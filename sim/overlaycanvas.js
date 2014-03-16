@@ -4,7 +4,6 @@ SimulatorOverlay.prototype = new google.maps.OverlayView();
 
 /** @constructor */
 function SimulatorOverlay(bn, elm, map,cb,sim) {
-  console.log(sim);
   this.bounds_ = bn;
   this.myb = bn;
   this._elm = elm;

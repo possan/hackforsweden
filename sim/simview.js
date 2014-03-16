@@ -4,7 +4,7 @@ function changeView() {
 	var selView = this.getAttribute('data-view');
 	var view = document.querySelectorAll('#viewCnt div.'+selView)[0];
 
-	console.log(view);
+	//console.log(view);
 	view.style.display = view.style.display=='block'?'none':'block';
 }
 

@@ -58,10 +58,9 @@ StatsOverlay.prototype.onAdd = function() {
   var t = this;
 
   google.maps.event.addListener(this.marker_, 'click', function(e) {
-        console.log('klick på marker');
         t._elm.style.display = 'block';
     });
-  console.log(this._elm);
+  //console.log(this._elm);
   panes.overlayLayer.appendChild(this._elm);
 };
 

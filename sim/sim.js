@@ -138,10 +138,10 @@ Simulation.prototype.init = function(opts) {
 	this.canvas2.width = opts.width;
 	this.canvas2.height = opts.height;
 	this.ctx2 = this.canvas2.getContext('2d');
-	console.log('canvas2', this.canvas2);
+	//console.log('canvas2', this.canvas2);
 	this.ctx2.imageSmoothingEnabled = false;
 	this.ctx2.webkitImageSmoothingEnabled = false;
-	console.log('ctx2', this.ctx2);
+	//console.log('ctx2', this.ctx2);
 	//	setTimeout(function() {
 	//		document.body.appendChild(_this.canvas2);
 	//	}, 10000);

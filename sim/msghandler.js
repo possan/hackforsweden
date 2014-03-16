@@ -1,7 +1,6 @@
 var loadedData;
 
 window.dd = function(d) {
-	console.log('hä är det data', d);
 	for (var i = 0; i < d.Entries.length; i++) {
 		var id = d.Entries[i].ID;
 		var updated = parseInt(d.Entries[i].Updated.slice(6,20));
