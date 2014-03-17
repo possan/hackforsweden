@@ -86,7 +86,7 @@ body input, body button {
 }
 
 .notheme #nyheter {
-	position:relative; left:20px; top:40px; width: 260px; height: 305px; border-style:solid;  border-width: 1px; border-color:#ffffff;
+	position:relative; left:20px; top:30px; width: 260px; height: 305px; border-style:solid;  border-width: 1px; border-color:#ffffff;
 }
 .innercnt {
 	max-height: 360px;
@@ -103,13 +103,13 @@ body input, body button {
 .notheme #fastighet {
 	position:relative; 
 	left:20px; 
-	top:30px; 
+	top:20px; 
 	width: 260px; 
 	height: 200px; 
 	border:1px solid #ffffff;
 }
 .notheme #riskText {
-	position:relative; left:20px; top:50px; width: 260px; height: 116px; border-style:solid;  border-width: 1px; border-color:#ffffff; font-size:11px; padding: 2px 2px 2px 2px; text-align: justify;
+	position:relative; left:20px; top:40px; width: 260px; height: 130px; border-style:solid;  border-width: 1px; border-color:#ffffff; font-size:11px; padding: 2px 2px 2px 2px; text-align: justify;
 }
 
 .notheme #mainframe {
@@ -300,6 +300,7 @@ div.news_div
 	font-family: American Typewriter;
 */
 	color:#ffffff;
+	text-align: justify;
 }
 
 span.cursor{
