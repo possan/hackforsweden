@@ -5,6 +5,13 @@
  * Reimplementation work started from Björn Sållarps .NET code
  *
  * v0.01 - Author Marcus Kempe
+ *
+ * Example usage (WGS84 to SWEREF99TM):
+ *
+ * var pos = new WGS84Position(56.626271,16.242655);
+ * var swerefpos = pos.toSWEREF99TM();
+ * console.log(swerefpos)
+ *
  */
 
 /*
@@ -263,26 +270,26 @@ function GaussKreuger(){
         var lambda_zero = this.central_meridian * deg_to_rad;
 
         var phi_star = phi - Math.sin(phi) * Math.cos(phi) * (A +
-                        B * Math.Pow(Math.sin(phi), 2) +
-                        C * Math.Pow(Math.sin(phi), 4) +
-                        D * Math.Pow(Math.sin(phi), 6));
+                        B * Math.pow(Math.sin(phi), 2) +
+                        C * Math.pow(Math.sin(phi), 4) +
+                        D * Math.pow(Math.sin(phi), 6));
         var delta_lambda = lambda - lambda_zero;
         var xi_prim = Math.atan(Math.tan(phi_star) / Math.cos(delta_lambda));
         var eta_prim = this.math_atanh(Math.cos(phi_star) * Math.sin(delta_lambda));
-        var x = scale * a_roof * (xi_prim +
+        var x = this.scale * a_roof * (xi_prim +
                         beta1 * Math.sin(2.0 * xi_prim) * this.math_cosh(2.0 * eta_prim) +
                         beta2 * Math.sin(4.0 * xi_prim) * this.math_cosh(4.0 * eta_prim) +
                         beta3 * Math.sin(6.0 * xi_prim) * this.math_cosh(6.0 * eta_prim) +
                         beta4 * Math.sin(8.0 * xi_prim) * this.math_cosh(8.0 * eta_prim)) +
-                        false_northing;
-        var y = scale * a_roof * (eta_prim +
+                        this.false_northing;
+        var y = this.scale * a_roof * (eta_prim +
                         beta1 * Math.cos(2.0 * xi_prim) * this.math_sinh(2.0 * eta_prim) +
                         beta2 * Math.cos(4.0 * xi_prim) * this.math_sinh(4.0 * eta_prim) +
                         beta3 * Math.cos(6.0 * xi_prim) * this.math_sinh(6.0 * eta_prim) +
                         beta4 * Math.cos(8.0 * xi_prim) * this.math_sinh(8.0 * eta_prim)) +
                         this.false_easting;
-        x_y.push(Math.Round(x * 1000.0) / 1000.0);
-        x_y.push(Math.Round(y * 1000.0) / 1000.0);
+        x_y.push(Math.round(x * 1000.0) / 1000.0);
+        x_y.push(Math.round(y * 1000.0) / 1000.0);
 
         return x_y;
     };
@@ -494,6 +501,13 @@ function WGS84Position(latitude, longitude)
         var seconds = (Math.abs(value) - degrees - minutes / 60) * 3600;
         return (value >= 0 ? positiveValue : negativeValue)+" "+degrees+"º "+minutes+"' "+"Math.Round(seconds, 5)\"";
     }
+
+    this.toSWEREF99TM = function(){
+        var gkProjection = new GaussKreuger();
+        gkProjection.swedish_params('sweref_99_tm');
+        var lat_lon = gkProjection.geodetic_to_grid(this.Latitude, this.Longitude);
+        return new SWEREF99Position(lat_lon[0],lat_lon[1]);
+    };
 }
 
 //WGS84Position.inherits(Position);

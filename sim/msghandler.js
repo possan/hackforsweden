@@ -13,11 +13,6 @@ window.dd = function(d) {
 	};
 };
 
-window.aaa = function(d) {
-	var kallor = JSON.load(d);
-	console.log(kallor.features);
-}
-
 function write_char(s,div) {
 	setTimeout(function() {
 		var first = s.charAt(0);

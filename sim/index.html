@@ -147,7 +147,6 @@
 	</div>
 	<script type="text/javascript">
 		window.addEventListener('load', function() {
-
 			var myOptions = {disableDefaultUI: true,zoom:12,center:centerlatlng,mapTypeId:google.maps.MapTypeId.TERRAIN,draggableCursor:'crosshair',scaleControl:false};
 			var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
 			var projection;
@@ -188,45 +187,36 @@
 			{
 				"namn":"Skogs API (SLU)",
 				"url":"view/layer_wood.png"
-			},
-			{
-				"namn":"Källor (SGU)",
-				action : function(){
-					// $.each(brunnLookup,function(i,j) {
-					// 	var mrk = new google.maps.Marker({
-					// 			    position: new google.maps.LatLng(j.y,j.x),
-					// 			    map: map,
-					// 			    //icon:'caution.png',
-					// 			    animation: google.maps.Animation.DROP,
-					// 			    title: j.t
-					// 			});
-					// 	tmpmarker.push(mrk);
-					// });
-
-					$.getJSON("views/kallor.json", function(json) {
-					    console.log(json); // this will show the info it in firebug console
-					    var kalla = null;
-					    $.each(json.features,function(i,j){
-					    	kalla = j;
-					    	var properties = j.properties;
-					    	var coord = j.geometry.coordinates;
-					    	var id = properties.id;
-					    	var namn = properties.namn;
-					    	var kommun = properties.kommun;
-					    	var kalltyp = properties.kalltyp;
-					    	var temp = properties.temp;
-					    	var akvifertyp = properties.akvifertyp;
-					    	var x = coord[0];
-					    	var y = coord[1];
-					    	var pos = new SWEREF99Position(x,y);
-
-							console.log(pos.toWGS84().LatitudeToString());
-							console.log(pos.toWGS84().LongitudeToString());
-							//console.log(x+" "+y);
-						});
-					});
-				}
 			}
+			// ,
+			// {
+			// 	"namn":"Källor (SGU)",
+			// 	action : function(){
+
+					// $.getJSON("views/kallor.json", function(json) {
+					//     console.log(json); // this will show the info it in firebug console
+					//     var kalla = null;
+					//     $.each(json.features,function(i,j){
+					//     	kalla = j;
+					//     	var properties = j.properties;
+					//     	var coord = j.geometry.coordinates;
+					//     	var id = properties.id;
+					//     	var namn = properties.namn;
+					//     	var kommun = properties.kommun;
+					//     	var kalltyp = properties.kalltyp;
+					//     	var temp = properties.temp;
+					//     	var akvifertyp = properties.akvifertyp;
+					//     	var x = coord[0];
+					//     	var y = coord[1];
+					//     	var pos = new SWEREF99Position(x,y);
+
+					// 		console.log(pos.toWGS84().LatitudeToString());
+					// 		console.log(pos.toWGS84().LongitudeToString());
+					// 		//console.log(x+" "+y);
+					// 	});
+					// });
+			// 	}
+			// }
 			];
 			var useRainBySmhi = false;
 
